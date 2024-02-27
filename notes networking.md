@@ -1,32 +1,57 @@
-**inter-VLAN trunking** and **SSH configuration**. I'll provide an overview of each topic along with relevant commands.
+! Step 1: Enter the global configuration mode
+Switch> enable
+Switch# configure terminal
 
-## Inter-VLAN Trunking Configuration Cheat Sheet
+! Step 2: Assign a hostname to the switch
+Switch(config)# hostname S1
+S1(config)#
 
-### Traditional Inter-VLAN Routing
-- **Description**: This method relies on a router with multiple physical interfaces, where each interface is connected to a switch (one for each VLAN). The router interfaces become default gateways for hosts in each VLAN.
-- **Steps**:
-    1. Configure router interfaces with IP addresses for each VLAN.
-    2. Set switch ports connected to the router in **access mode**.
-    3. Ensure that the router's routing table includes routes for all VLANs.
-    4. Hosts in different VLANs can communicate via the router.
+! Step 3: Configure a password for privileged EXEC mode
+S1(config)# enable secret class
 
-### Router-on-a-Stick Inter-VLAN Routing
-- **Description**: In this approach, a single router interface is used for all VLANs. The router performs inter-VLAN routing based on subinterfaces (sub-interfaces with different VLAN tags).
-- **Steps**:
-    1. Create subinterfaces on the router interface (e.g., `FastEthernet0/0.10` for VLAN 10).
-    2. Assign VLAN tags to subinterfaces (e.g., VLAN 10 = tag 10).
-    3. Configure IP addresses on subinterfaces.
-    4. Set the switch port connected to the router in **trunk mode**.
-    5. Hosts in different VLANs communicate via the router's subinterfaces.
+! Step 4: Configure a password for console access
+S1(config)# line console 0
+S1(config-line)# password cisco
+S1(config-line)# login
 
-### Multilayer Switch Inter-VLAN Routing
-- **Description**: Multilayer switches (Layer 3 switches) can perform inter-VLAN routing without an external router. They have VLAN interfaces and routing capabilities.
-- **Steps**:
-    1. Create VLANs on the switch.
-    2. Assign IP addresses to VLAN interfaces (e.g., `interface VLAN10`).
-    3. Enable IP routing (`ip routing` command).
-    4. Set switch ports in **access mode** or **trunk mode** as needed.
-    5. Hosts communicate via the switch's VLAN interfaces.
+! Step 5: Configure a password for vty access
+S1(config)# line vty 0 15
+S1(config-line)# password cisco
+S1(config-line)# login
+
+! Step 6: Configure an IP address and subnet mask for the switch management interface (VLAN 1)
+S1(config)# interface vlan 1
+S1(config-if)# ip address 192.168.1.2 255.255.255.0
+S1(config-if)# no shutdown
+
+! Step 7: Configure SSH access to the switch
+S1(config)# ip domain-name example.com
+S1(config)# crypto key generate rsa
+! Enter the modulus size (1024 or higher)
+S1(config)# 1024
+S1(config)# ip ssh version 2
+S1(config)# username admin secret class
+S1(config)# line vty 0 15
+S1(config-line)# transport input ssh
+
+! Step 8: Configure VLANs on the switch
+S1(config)# vlan 10
+S1(config-vlan)# name Sales
+S1(config-vlan)# exit
+S1(config)# vlan 20
+S1(config-vlan)# name Marketing
+S1(config-vlan)# exit
+
+! Step 9: Assign switch ports to VLANs
+S1(config)# interface range fastEthernet 0/1 - 12
+S1(config-if-range)# switchport mode access
+S1(config-if-range)# switchport access vlan 10
+S1(config-if-range)# exit
+S1(config)# interface range fastEthernet 0/13 - 24
+S1(config-if-range)# switchport mode access
+S1(config-if-range)# switchport access vlan 20
+S1(config-if-range)# exit
+
 
 ## SSH Configuration Cheat Sheet
 
