@@ -1,3 +1,5 @@
+
+```bash
 ! Step 1: Enter the global configuration mode
 Switch> enable
 Switch# configure terminal
@@ -51,6 +53,7 @@ S1(config)# interface range fastEthernet 0/13 - 24
 S1(config-if-range)# switchport mode access
 S1(config-if-range)# switchport access vlan 20
 S1(config-if-range)# exit
+```
 
 
 ## SSH Configuration Cheat Sheet
