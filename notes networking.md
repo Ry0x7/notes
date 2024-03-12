@@ -129,3 +129,8 @@ S1(config)# interface vlan 20
 S1(config-if)# ip helper-address 192.168.20.1
 S1(config-if)# exit
 ```
+
+# Additional Step: Disable Firewall on Windows PC
+# Note: Please execute these commands on the Windows command prompt.
+cmd
+netsh advfirewall set allprofiles state off
