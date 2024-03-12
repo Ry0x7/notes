@@ -1,5 +1,5 @@
 
-```bash
+```CLI
 
 ! Step 1: Enter the global configuration mode
 Switch> enable
