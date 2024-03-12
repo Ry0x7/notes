@@ -132,5 +132,6 @@ S1(config-if)# exit
 
 # Additional Step: Disable Firewall on Windows PC
 # Note: Please execute these commands on the Windows command prompt.
-cmd
+```cmd
 netsh advfirewall set allprofiles state off
+```
