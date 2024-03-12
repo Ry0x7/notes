@@ -54,6 +54,7 @@ S1(config-line)# transport input ssh
 S1(config)# vlan 10
 S1(config-vlan)# name Sales
 S1(config-vlan)# exit
+
 S1(config)# vlan 20
 S1(config-vlan)# name Marketing
 S1(config-vlan)# exit
@@ -65,6 +66,7 @@ S1(config)# interface range fastEthernet 0/1 - 12
 S1(config-if-range)# switchport mode access
 S1(config-if-range)# switchport access vlan 10
 S1(config-if-range)# exit
+
 S1(config)# interface range fastEthernet 0/13 - 24
 S1(config-if-range)# switchport mode access
 S1(config-if-range)# switchport access vlan 20
@@ -92,6 +94,7 @@ Router(config)# interface GigabitEthernet0/0.10
 Router(config-subif)# encapsulation dot1Q 10
 Router(config-subif)# ip address 192.168.10.1 255.255.255.0
 Router(config-subif)# exit
+
 Router(config)# interface GigabitEthernet0/0.20
 Router(config-subif)# encapsulation dot1Q 20
 Router(config-subif)# ip address 192.168.20.1 255.255.255.0
@@ -103,6 +106,7 @@ Router(config-subif)# exit
 S1(config)# interface vlan 10
 S1(config-if)# ip address 192.168.10.2 255.255.255.0
 S1(config-if)# exit
+
 S1(config)# interface vlan 20
 S1(config-if)# ip address 192.168.20.2 255.255.255.0
 S1(config-if)# exit
@@ -114,10 +118,13 @@ Router(config)# ip dhcp pool VLAN10
 Router(dhcp-config)# network 192.168.10.0 255.255.255.0
 Router(dhcp-config)# default-router 192.168.10.1
 Router(dhcp-config)# exit
+Router(config)# ip dhcp excluded-address 192.168.10.1 192.168.10.10
+
 Router(config)# ip dhcp pool VLAN20
 Router(dhcp-config)# network 192.168.20.0 255.255.255.0
 Router(dhcp-config)# default-router 192.168.20.1
 Router(dhcp-config)# exit
+Router(config)# ip dhcp excluded-address 192.168.20.1 192.168.20.10
 ```
 ------
 ```bash
@@ -125,6 +132,7 @@ Router(dhcp-config)# exit
 S1(config)# interface vlan 10
 S1(config-if)# ip helper-address 192.168.10.1
 S1(config-if)# exit
+
 S1(config)# interface vlan 20
 S1(config-if)# ip helper-address 192.168.20.1
 S1(config-if)# exit
