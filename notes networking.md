@@ -4,7 +4,7 @@
 ! Step 1: Enter the global configuration mode
 Switch> enable
 Switch# configure terminal
-
+======
 ! Step 2: Assign a hostname to the switch
 Switch(config)# hostname S1
 S1(config)#
