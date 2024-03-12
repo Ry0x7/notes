@@ -1,5 +1,6 @@
 
 ```bash
+
 ! Step 1: Enter the global configuration mode
 Switch> enable
 Switch# configure terminal
@@ -20,6 +21,7 @@ S1(config-line)# login
 S1(config)# line vty 0 15
 S1(config-line)# password cisco
 S1(config-line)# login
+S1(config)# service password-encryption
 
 ! Step 6: Configure an IP address and subnet mask for the switch management interface (VLAN 1)
 S1(config)# interface vlan 1
@@ -53,39 +55,57 @@ S1(config)# interface range fastEthernet 0/13 - 24
 S1(config-if-range)# switchport mode access
 S1(config-if-range)# switchport access vlan 20
 S1(config-if-range)# exit
+
+! Step 10: Configure Trunking
+S1(config)# interface range gigabitEthernet 0/1 - 2
+S1(config-if-range)# switchport mode trunk
+S1(config-if-range)# switchport trunk allowed vlan all
+S1(config-if-range)# exit
+
+! Step 11: Configure Native VLAN on Trunk Ports
+S1(config)# interface range gigabitEthernet 0/1 - 2
+S1(config-if-range)# switchport trunk native vlan 99
+S1(config-if-range)# exit
+
+! Step 12: Setting up Router Subinterface
+Router(config)# interface GigabitEthernet0/0.10
+Router(config-subif)# encapsulation dot1Q 10
+Router(config-subif)# ip address 192.168.10.1 255.255.255.0
+Router(config-subif)# exit
+
+Router(config)# interface GigabitEthernet0/0.20
+Router(config-subif)# encapsulation dot1Q 20
+Router(config-subif)# ip address 192.168.20.1 255.255.255.0
+Router(config-subif)# exit
+
+! Step 13: Setting switch default gateway for VLANS
+S1(config)# interface vlan 10
+S1(config-if)# ip address 192.168.10.2 255.255.255.0
+S1(config-if)# exit
+
+S1(config)# interface vlan 20
+S1(config-if)# ip address 192.168.20.2 255.255.255.0
+S1(config-if)# exit
+
+! Step 14: Setting Up DHCPv4 pool for each interface or VLAN
+Router(config)# ip dhcp pool VLAN10
+Router(dhcp-config)# network 192.168.10.0 255.255.255.0
+Router(dhcp-config)# default-router 192.168.10.1
+Router(dhcp-config)# exit
+
+Router(config)# ip dhcp pool VLAN20
+Router(dhcp-config)# network 192.168.20.0 255.255.255.0
+Router(dhcp-config)# default-router 192.168.20.1
+Router(dhcp-config)# exit
+
+! Step 15: Enable DHCP on vlan interfaces On the switch, configure the helper address to point to the router’s IP address.
+S1(config)# interface vlan 10
+S1(config-if)# ip helper-address 192.168.10.1
+S1(config-if)# exit
+
+S1(config)# interface vlan 20
+S1(config-if)# ip helper-address 192.168.20.1
+S1(config-if)# exit
+
+
 ```
-
-
-## SSH Configuration Cheat Sheet
-
-### Enable SSH on Cisco Devices
-1. Access the device's CLI.
-2. Generate an RSA key pair:
-   ```
-   crypto key generate rsa
-   ```
-3. Configure the SSH version and authentication methods:
-   ```
-   ip ssh version 2
-   ip ssh authentication-retries 3
-   ```
-4. Create a user account and set a strong password:
-   ```
-   username admin privilege 15 secret <password>
-   ```
-5. Enable SSH:
-   ```
-   line vty 0 15
-   transport input ssh
-   login local
-   ```
-
-### Access Control for SSH
-- Use ACLs to restrict SSH access to specific IP addresses:
-  ```
-  access-list 10 permit host <trusted_IP>
-  line vty 0 15
-  access-class 10 in
-  ```
-
-Remember to replace `<trusted_IP>` with the actual trusted IP address.
